@@ -2,19 +2,19 @@ name: NextJs IIS Deployment Example
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
       
 jobs:
   build-and-deploy:    
     runs-on: [self-hosted]
 
     steps:      
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
       
     - name: Set up NextJs
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v1
       with:
         node-version: 16
         cache: npm
