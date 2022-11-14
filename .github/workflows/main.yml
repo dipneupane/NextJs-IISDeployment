@@ -38,7 +38,7 @@ jobs:
         }
 
         Start-Sleep -s 15        
-        Copy-Item ${{env.DOTNET_ROOT}}/actions-runner/_work/Nextjs-IIS-Deployment/Nextjs-IIS-Deployment/* C:\inetpub\wwwroot\NextApp -Recurse -Force
+        Copy-Item ${{env.DOTNET_ROOT}}/actions-runner/_work/NextJs-IISDeployment/NextJs-IISDeployment/* C:\inetpub\wwwroot\NextApp -Recurse -Force
 
         if ((Get-WebSiteState -Name NextApp).Value -eq "Stopped")
         {
