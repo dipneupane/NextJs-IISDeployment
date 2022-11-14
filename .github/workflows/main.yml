@@ -1,0 +1,54 @@
+name: NextJs IIS Deployment Example
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+      
+jobs:
+  build-and-deploy:    
+    runs-on: [self-hosted]
+
+    steps:      
+    - uses: actions/checkout@master
+      
+    - name: Set up NextJs
+      uses: actions/setup-node@master
+      with:
+        node-version: 16
+        cache: npm
+
+    - name: Build
+      run: |
+        npm install
+        npm run build
+
+    - name: Deploy
+      run: |
+        if ((Get-WebSiteState -Name NextApp).Value -eq "Started")
+        {
+            Stop-WebSite -Name NextApp
+            echo "Stopped Website NextApp"
+        }
+        if ((Get-WebAppPoolState -Name NextApp).Value -eq "Started")
+        {
+            Stop-WebAppPool -Name NextApp
+            echo "Stopped Application Pool NextApp"
+        }
+
+        Start-Sleep -s 15        
+        Copy-Item ${{env.DOTNET_ROOT}}/actions-runner/_work/Nextjs-IIS-Deployment/Nextjs-IIS-Deployment/* C:\inetpub\wwwroot\NextApp -Recurse -Force
+
+        if ((Get-WebSiteState -Name NextApp).Value -eq "Stopped")
+        {
+            Start-WebSite -Name NextApp
+            echo "Started Website NextApp"
+        }
+        if ((Get-WebAppPoolState -Name NextApp).Value -eq "Stopped")
+        {
+            Start-WebAppPool -Name NextApp
+            echo "Started Application Pool NextApp"
+        }
+
+        if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
